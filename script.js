@@ -1,172 +1,3 @@
-class SimonGame {
-    constructor() {
-        this.colors = ['golden', 'jade', 'ruby', 'purple'];
-        this.sequence = [];
-        this.playerSequence = [];
-        this.score = 0;
-        this.highScore = localStorage.getItem('simonHighScore') || 0;
-        this.isGameActive = false;
-        this.isPlayerTurn = false;
-
-        this.initializeElements();
-        this.displayHighScore();
-        this.addEventListeners();
-    }
-
-    initializeElements() {
-        this.buttons = document.querySelectorAll('.color-button');
-        this.startBtn = document.getElementById('start-btn');
-        this.resetBtn = document.getElementById('reset-btn');
-        this.scoreElement = document.getElementById('score');
-        this.highScoreElement = document.getElementById('high-score');
-        this.messageElement = document.getElementById('message');
-    }
-
-    addEventListeners() {
-        this.startBtn.addEventListener('click', () => this.startGame());
-        this.resetBtn.addEventListener('click', () => this.resetGame());
-
-        this.buttons.forEach(button => {
-            button.addEventListener('click', (e) => this.handlePlayerInput(e));
-        });
-    }
-
-    startGame() {
-        if (this.isGameActive) return;
-
-        this.isGameActive = true;
-        this.sequence = [];
-        this.playerSequence = [];
-        this.score = 0;
-        this.updateScore();
-        this.messageElement.textContent = '元宵游戏开始！请观察序列...';
-
-        this.addToSequence();
-    }
-
-    resetGame() {
-        this.isGameActive = false;
-        this.isPlayerTurn = false;
-        this.sequence = [];
-        this.playerSequence = [];
-        this.score = 0;
-        this.updateScore();
-        this.messageElement.textContent = '元宵游戏已重置';
-    }
-
-    addToSequence() {
-        const randomColor = this.colors[Math.floor(Math.random() * this.colors.length)];
-        this.sequence.push(randomColor);
-        this.playerSequence = [];
-        this.isPlayerTurn = false;
-
-        setTimeout(() => {
-            this.playSequence();
-        }, 1000);
-    }
-
-    async playSequence() {
-        this.messageElement.textContent = '请观察宫灯序列...';
-
-        for (let i = 0; i < this.sequence.length; i++) {
-            await this.flashButton(this.sequence[i]);
-            await this.delay(300);
-        }
-
-        this.isPlayerTurn = true;
-        this.messageElement.textContent = '轮到你了！元宵好运！';
-    }
-
-    flashButton(color) {
-        return new Promise(resolve => {
-            const button = document.querySelector(`[data-color="${color}"]`);
-            button.classList.add('active');
-            this.playSound(color);
-
-            setTimeout(() => {
-                button.classList.remove('active');
-                setTimeout(resolve, 300);
-            }, 500);
-        });
-    }
-
-    playSound(color) {
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
-
-        const frequencies = {
-            golden: 261.63,
-            jade: 329.63,
-            ruby: 392.00,
-            purple: 523.25
-        };
-
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-
-        oscillator.frequency.value = frequencies[color];
-        oscillator.type = 'sine';
-
-        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-
-        oscillator.start(audioContext.currentTime);
-        oscillator.stop(audioContext.currentTime + 0.5);
-    }
-
-    handlePlayerInput(event) {
-        if (!this.isGameActive || !this.isPlayerTurn) return;
-
-        const clickedColor = event.target.dataset.color;
-        this.flashButton(clickedColor);
-
-        const currentIndex = this.playerSequence.length;
-        this.playerSequence.push(clickedColor);
-
-        if (this.playerSequence[currentIndex] !== this.sequence[currentIndex]) {
-            this.gameOver();
-            return;
-        }
-
-        if (this.playerSequence.length === this.sequence.length) {
-            this.score++;
-            this.updateScore();
-            this.messageElement.textContent = '元宵好记性！准备下一轮...';
-            this.isPlayerTurn = false;
-
-            setTimeout(() => {
-                this.addToSequence();
-            }, 1500);
-        }
-    }
-
-    gameOver() {
-        this.isGameActive = false;
-        this.isPlayerTurn = false;
-        this.messageElement.textContent = `元宵游戏结束！你的分数是 ${this.score}`;
-
-        if (this.score > this.highScore) {
-            this.highScore = this.score;
-            localStorage.setItem('simonHighScore', this.highScore);
-            this.displayHighScore();
-            this.messageElement.textContent = `元宵新纪录！你的分数是 ${this.score}，团团圆圆！`;
-        }
-    }
-
-    updateScore() {
-        this.scoreElement.textContent = this.score;
-    }
-
-    displayHighScore() {
-        this.highScoreElement.textContent = this.highScore;
-    }
-
-    delay(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-}
-
 // 灯谜数据
 const riddles = [
     { question: "一口咬掉牛尾巴", answer: "告" },
@@ -176,15 +7,6 @@ const riddles = [
     { question: "一点一横长，口字在中央，大口不封口，小口里面藏", answer: "高" },
     { question: "两人土上谈心", answer: "坐" },
     { question: "十个哥哥", answer: "克" },
-    { question: "七十二小时", answer: "晶" },
-    { question: "需要一半，留下一半", answer: "雷" },
-    { question: "一月一日非今天", answer: "明" },
-    { question: "十五天", answer: "胖" },
-    { question: "种瓜得瓜", answer: "长" },
-    { question: "守门员", answer: "闪" },
-    { question: "一口吃掉牛尾巴", answer: "告" },
-    { question: "皇帝新衣", answer: "袭" },
-    { question: "格外大方", answer: "回" },
     { question: "七十二小时", answer: "晶" },
     { question: "需要一半，留下一半", answer: "雷" },
     { question: "一月一日非今天", answer: "明" },
@@ -206,50 +28,61 @@ class LanternRiddle {
         this.isRiddleVisible = false;
         this.initializeElements();
         this.addEventListeners();
+        console.log('灯谜游戏初始化完成');
     }
 
     initializeElements() {
         this.lanterns = document.querySelectorAll('.lantern');
         this.tangyuanBowl = document.querySelector('.tangyuan-bowl');
-        console.log('找到灯笼数量:', this.lanterns.length);
-        console.log('找到汤圆碗:', this.tangyuanBowl);
+        
+        // 校验元素是否存在
+        if (this.lanterns.length === 0) {
+            console.error('未找到灯笼元素，请检查DOM结构');
+            throw new Error('缺少核心元素：lantern');
+        }
+        if (!this.tangyuanBowl) {
+            console.error('未找到汤圆碗元素，请检查DOM结构');
+            throw new Error('缺少核心元素：tangyuan-bowl');
+        }
+        
+        console.log(`找到 ${this.lanterns.length} 个灯笼元素`);
     }
 
     addEventListeners() {
         // 为每个灯笼添加点击事件
         this.lanterns.forEach((lantern, index) => {
-            console.log(`为灯笼 ${index} 添加事件监听器`);
-
-            // 移除可能存在的旧事件监听器
-            lantern.removeEventListener('click', this.handleLanternClick);
-            lantern.removeEventListener('mouseenter', this.handleLanternHover);
-            lantern.removeEventListener('mouseleave', this.handleLanternLeave);
-
-            // 添加新的事件监听器，绑定正确的this上下文
-            lantern.addEventListener('click', this.handleLanternClick.bind(this));
-            lantern.addEventListener('mouseenter', this.handleLanternHover.bind(this));
-            lantern.addEventListener('mouseleave', this.handleLanternLeave.bind(this));
-
-            // 添加触摸事件支持（移动设备）
+            lantern.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.handleLanternClick(e);
+            });
+            
+            // 鼠标悬停/离开事件
+            lantern.addEventListener('mouseenter', () => this.handleLanternHover());
+            lantern.addEventListener('mouseleave', () => this.handleLanternLeave());
+            
+            // 移动端触摸事件
             lantern.addEventListener('touchstart', (e) => {
-                e.preventDefault(); // 防止双击缩放
-                this.handleLanternClick.call(this, e);
+                e.preventDefault();
+                this.handleLanternClick({ currentTarget: lantern });
             });
         });
 
-        // 为汤圆碗添加点击事件
-        if (this.tangyuanBowl) {
-            this.tangyuanBowl.addEventListener('click', this.handleTangyuanClick.bind(this));
-            // 添加触摸事件支持
-            this.tangyuanBowl.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                this.handleTangyuanClick.call(this);
-            });
-        }
+        // 汤圆碗点击事件
+        this.tangyuanBowl.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.handleTangyuanClick();
+        });
+        
+        // 移动端触摸事件
+        this.tangyuanBowl.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            this.handleTangyuanClick();
+        });
     }
 
     handleLanternClick(event) {
-        console.log('handleLanternClick 被调用');
+        console.log('灯笼被点击，显示灯谜');
+        
         // 清除之前的隐藏定时器
         if (this.hideTimeout) {
             clearTimeout(this.hideTimeout);
@@ -261,12 +94,14 @@ class LanternRiddle {
             this.lastRiddle = this.currentRiddle;
         }
 
-        // 随机选择一个灯谜
-        const randomIndex = Math.floor(Math.random() * riddles.length);
+        // 随机选择一个灯谜（避免重复）
+        let randomIndex;
+        do {
+            randomIndex = Math.floor(Math.random() * riddles.length);
+        } while (riddles[randomIndex] === this.currentRiddle && riddles.length > 1);
+        
         this.currentRiddle = riddles[randomIndex];
         this.isRiddleVisible = true;
-
-        console.log('选择的灯谜:', this.currentRiddle);
 
         // 显示灯谜
         this.showRiddle(event.currentTarget, this.currentRiddle.question);
@@ -291,35 +126,31 @@ class LanternRiddle {
     }
 
     handleTangyuanClick() {
+        console.log('汤圆碗被点击，显示谜底');
+        
         if (this.currentRiddle && this.isRiddleVisible) {
-            // 如果当前灯谜显示，显示当前灯谜的谜底
+            // 显示当前灯谜的谜底
             this.showAnswer(this.currentRiddle.answer);
         } else if (this.lastRiddle) {
-            // 如果灯谜已消失，显示上一个灯谜的谜底
+            // 显示上一个灯谜的谜底
             this.showAnswer(this.lastRiddle.answer);
         } else {
             // 没有灯谜可显示
-            alert('请先点击灯笼获取灯谜！');
+            alert('🎈 请先点击灯笼获取灯谜！');
         }
     }
 
     showRiddle(lantern, question) {
         // 移除之前的谜面
-        const existingRiddle = document.querySelector('.riddle-display');
-        if (existingRiddle) {
-            existingRiddle.remove();
-        }
+        this.hideRiddle();
 
         // 创建谜面显示元素
         const riddleDisplay = document.createElement('div');
         riddleDisplay.className = 'riddle-display';
         riddleDisplay.innerHTML = `<div class="riddle-content">🏮 ${question} 🏮</div>`;
 
-        // 将谜面添加到灯笼容器中
+        // 将谜面添加到灯笼中
         lantern.appendChild(riddleDisplay);
-
-        // 添加显示动画
-        riddleDisplay.style.animation = 'fadeIn 0.3s ease-in';
     }
 
     hideRiddle() {
@@ -327,9 +158,7 @@ class LanternRiddle {
         if (riddleDisplay) {
             riddleDisplay.style.animation = 'fadeOut 0.3s ease-out';
             setTimeout(() => {
-                if (riddleDisplay.parentNode) {
-                    riddleDisplay.remove();
-                }
+                riddleDisplay.remove();
             }, 300);
         }
     }
@@ -349,79 +178,37 @@ class LanternRiddle {
         // 将谜底添加到汤圆碗中
         this.tangyuanBowl.appendChild(answerDisplay);
 
-        // 添加显示动画
-        answerDisplay.style.animation = 'fadeIn 0.3s ease-in';
-
         // 5秒后自动隐藏谜底
         setTimeout(() => {
             answerDisplay.style.animation = 'fadeOut 0.3s ease-out';
             setTimeout(() => {
-                if (answerDisplay.parentNode) {
-                    answerDisplay.remove();
-                }
+                answerDisplay.remove();
             }, 300);
         }, 5000);
     }
 }
 
-// 初始化灯谜游戏
-console.log('JavaScript文件已加载');
-
-// 确保DOM完全加载后再初始化
-function initGame() {
-    console.log('开始初始化游戏...');
+// 确保DOM完全加载后初始化
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM加载完成，开始初始化灯谜游戏');
     try {
-        const lanterns = document.querySelectorAll('.lantern');
-        const tangyuanBowl = document.querySelector('.tangyuan-bowl');
-
-        if (lanterns.length === 0) {
-            console.error('未找到灯笼元素！');
-            alert('游戏初始化失败：未找到灯笼元素');
-            return;
-        }
-
-        if (!tangyuanBowl) {
-            console.error('未找到汤圆碗元素！');
-            alert('游戏初始化失败：未找到汤圆碗元素');
-            return;
-        }
-
-        console.log('找到灯笼数量:', lanterns.length);
-        console.log('找到汤圆碗:', tangyuanBowl);
-
-        // 显示调试信息
-        const debugInfo = document.getElementById('debug-info');
-        if (debugInfo) {
-            debugInfo.innerHTML = `✓ 游戏初始化成功<br>✓ 找到 ${lanterns.length} 个灯笼<br>✓ 找到汤圆碗<br>✓ 点击灯笼开始游戏`;
-            debugInfo.style.display = 'block';
-            // 5秒后隐藏调试信息
-            setTimeout(() => {
-                debugInfo.style.display = 'none';
-            }, 5000);
-        }
-
         new LanternRiddle();
-        console.log('元宵猜灯谜已初始化');
     } catch (error) {
-        console.error('游戏初始化出错:', error);
-        alert('游戏初始化失败：' + error.message);
+        console.error('游戏初始化失败:', error);
+        alert(`游戏加载出错：${error.message}，请刷新页面重试`);
     }
-}
+});
 
-// 多种方式确保初始化
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initGame);
-} else {
-    // DOM已经加载完成
-    initGame();
-}
-
-// 备用方案：确保即使前面的初始化失败也能运行
+// 兜底：页面完全加载后再检查
 window.addEventListener('load', () => {
     setTimeout(() => {
-        if (!document.querySelector('.riddle-display')) {
-            console.log('备用初始化...');
-            initGame();
+        if (!document.querySelector('.riddle-display') && !document.querySelector('.answer-display')) {
+            console.log('备用初始化：尝试重新初始化游戏');
+            try {
+                new LanternRiddle();
+            } catch (error) {
+                console.error('备用初始化也失败:', error);
+            }
         }
-    }, 100);
+    }, 500);
 });
