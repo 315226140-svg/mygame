@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>元宵猜灯谜</title>
+    <link rel="stylesheet" href="./css/style.css?v=2">
+    <style>
+        /* 添加内联样式作为备份 */
+        body {
+            font-family: 'Microsoft YaHei', 'SimHei', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background: linear-gradient(180deg, #0a1628 0%, #1a2a4a 50%, #2a1a3a 100%);
+        }
+        .night-sky {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        .festival-title {
+            font-size: 3.5em;
+            margin-bottom: 30px;
+            color: #ffd700;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+        }
+        .game-instruction {
+            color: #ffd700;
+            font-size: 1.2em;
+            margin: 20px 0;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+        .lanterns-container {
+            margin: 30px 0;
+            padding: 20px;
+        }
+        .lantern-row {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        .lantern {
+            position: relative;
+            animation: swing 3s ease-in-out infinite;
+            transform-origin: top center;
+            cursor: pointer;
+            z-index: 10;
+            padding: 10px;
+            min-width: 100px;
+            min-height: 130px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.3s ease;
+        }
+        .lantern:hover {
+            transform: scale(1.1);
+        }
+        .lantern:active {
+            transform: scale(0.95);
+        }
+        .lantern-body {
+            width: 80px;
+            height: 100px;
+            background: linear-gradient(180deg, #ff4444, #cc0000, #ff4444);
+            border-radius: 40px 40px 20px 20px;
+            position: relative;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.6);
+            border: 3px solid #ffd700;
+            pointer-events: none;
+        }
+        .lantern-fringe {
+            width: 60px;
+            height: 20px;
+            margin: 0 auto;
+            position: relative;
+            pointer-events: none;
+        }
+        .tangyuan-bowl {
+            margin: 40px auto;
+            max-width: 300px;
+            position: relative;
+            cursor: pointer;
+            padding-top: 60px;
+        }
+        .bowl {
+            width: 250px;
+            height: 120px;
+            background: linear-gradient(180deg, #8b4513, #654321);
+            border-radius: 0 0 125px 125px;
+            margin: 0 auto;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        .tangyuan {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: radial-gradient(circle at 30% 30%, #fff, #f5f5dc, #ddd);
+            border-radius: 50%;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        .tangyuan-1 { top: 30px; left: 30px; }
+        .tangyuan-2 { top: 40px; left: 80px; }
+        .tangyuan-3 { top: 35px; left: 130px; }
+        .tangyuan-4 { top: 45px; left: 175px; }
+        .tangyuan-5 { top: 50px; left: 220px; }
+        .bowl-text {
+            text-align: center;
+            margin-top: 20px;
+            color: #ffd700;
+            font-size: 1.2em;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+        @keyframes swing {
+            0%, 100% { transform: rotate(-3deg); }
+            50% { transform: rotate(3deg); }
+        }
+        .riddle-display {
+            position: absolute;
+            top: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            white-space: nowrap;
+        }
+        .riddle-content {
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            color: #333;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            box-shadow: 0 5px 20px rgba(255, 215, 0, 0.6);
+            border: 2px solid #fff;
+        }
+        .answer-display {
+            position: absolute;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            white-space: nowrap;
+        }
+        .answer-content {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a5a);
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 1.2em;
+            font-weight: bold;
+            box-shadow: 0 5px 20px rgba(255, 107, 107, 0.6);
+            border: 2px solid #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="night-sky">
+        <div class="stars"></div>
+        <div class="moon"></div>
+    </div>
+
+    <div class="container">
+        <h1 class="festival-title">
+            <span class="title-simon">元宵</span>
+            <span class="title-greeting"> 猜灯谜</span>
+        </h1>
+
+        <p class="game-instruction">点击灯笼获取灯谜，点击汤圆查看谜底</p>
+        <div id="debug-info" style="display:none; color: #fff; margin: 10px 0; padding: 10px; background: rgba(0,0,0,0.5); border-radius: 5px;"></div>
+
+        <div class="lanterns-container">
+            <div class="lantern-row first-row">
+                <div class="lantern">
+                    <div class="lantern-body"></div>
+                    <div class="lantern-fringe"></div>
+                </div>
+                <div class="lantern">
+                    <div class="lantern-body"></div>
+                    <div class="lantern-fringe"></div>
+                </div>
+                <div class="lantern">
+                    <div class="lantern-body"></div>
+                    <div class="lantern-fringe"></div>
+                </div>
+                <div class="lantern">
+                    <div class="lantern-body"></div>
+                    <div class="lantern-fringe"></div>
+                </div>
+            </div>
+
+            <div class="lantern-row second-row">
+                <div class="lantern">
+                    <div class="lantern-body"></div>
+                    <div class="lantern-fringe"></div>
+                </div>
+                <div class="lantern">
+                    <div class="lantern-body"></div>
+                    <div class="lantern-fringe"></div>
+                </div>
+                <div class="lantern">
+                    <div class="lantern-body"></div>
+                    <div class="lantern-fringe"></div>
+                </div>
+                <div class="lantern">
+                    <div class="lantern-body"></div>
+                    <div class="lantern-fringe"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tangyuan-bowl">
+            <div class="bowl">
+                <div class="tangyuan tangyuan-1"></div>
+                <div class="tangyuan tangyuan-2"></div>
+                <div class="tangyuan tangyuan-3"></div>
+                <div class="tangyuan tangyuan-4"></div>
+                <div class="tangyuan tangyuan-5"></div>
+                <div class="steam steam-1"></div>
+                <div class="steam steam-2"></div>
+                <div class="steam steam-3"></div>
+            </div>
+            <p class="bowl-text">元宵佳节 团团圆圆</p>
+        </div>
+    </div>
+
+    <script src="./js/script.js?v=2"></script>
+</body>
+</html>
