@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>元宵猜灯谜</title>
+    <!-- 修复路径：确保相对路径正确 -->
     <link rel="stylesheet" href="./css/style.css?v=2">
     <style>
-        /* 添加内联样式作为备份 */
+        /* 保留内联样式作为基础（与外部CSS互补） */
         body {
             font-family: 'Microsoft YaHei', 'SimHei', sans-serif;
             min-height: 100vh;
@@ -181,7 +182,6 @@
         </h1>
 
         <p class="game-instruction">点击灯笼获取灯谜，点击汤圆查看谜底</p>
-        <div id="debug-info" style="display:none; color: #fff; margin: 10px 0; padding: 10px; background: rgba(0,0,0,0.5); border-radius: 5px;"></div>
 
         <div class="lanterns-container">
             <div class="lantern-row first-row">
@@ -238,6 +238,7 @@
         </div>
     </div>
 
+    <!-- 修复路径：确保JS文件引用正确 -->
     <script src="./js/script.js?v=2"></script>
 </body>
 </html>
