@@ -317,106 +317,6 @@ body {
     text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
 }
 
-/* 响应式设计 */
-@media (max-width: 768px) {
-    .festival-title {
-        font-size: 2.5em;
-    }
-
-    .moon {
-        width: 80px;
-        height: 80px;
-        top: 30px;
-        right: 30px;
-    }
-
-    .lantern-row {
-        gap: 15px;
-    }
-
-    .lantern-body {
-        width: 60px;
-        height: 75px;
-    }
-
-    .lantern-body::after {
-        width: 35px;
-        height: 45px;
-    }
-
-    .color-button {
-        width: 120px;
-        height: 120px;
-        font-size: 2em;
-    }
-
-    .controls {
-        flex-direction: column;
-        gap: 15px;
-    }
-
-    .festival-btn {
-        padding: 12px 30px;
-        font-size: 1.1em;
-    }
-
-    .bowl {
-        width: 200px;
-        height: 100px;
-        border-radius: 0 0 100px 100px;
-    }
-
-    .bowl::before {
-        border-radius: 0 0 90px 90px;
-    }
-
-    .tangyuan {
-        width: 30px;
-        height: 30px;
-    }
-
-    .tangyuan-1 { top: 25px; left: 20px; }
-    .tangyuan-2 { top: 30px; left: 60px; }
-    .tangyuan-3 { top: 28px; left: 100px; }
-    .tangyuan-4 { top: 35px; left: 140px; }
-    .tangyuan-5 { top: 38px; left: 175px; }
-}
-
-@media (max-width: 480px) {
-    .container {
-        padding: 20px 10px;
-    }
-
-    .festival-title {
-        font-size: 2em;
-    }
-
-    .title-greeting {
-        display: block;
-        margin-top: 10px;
-    }
-
-    .lantern-row {
-        gap: 10px;
-    }
-
-    .lantern-body {
-        width: 50px;
-        height: 65px;
-    }
-
-    .game-board {
-        gap: 15px;
-        max-width: 280px;
-    }
-
-    .color-button {
-        width: 100px;
-        height: 100px;
-        font-size: 1.8em;
-    }
-}
-
 /* 灯谜显示样式 */
 .riddle-display {
     position: absolute;
@@ -426,6 +326,7 @@ body {
     z-index: 100;
     white-space: nowrap;
     pointer-events: none;
+    animation: fadeIn 0.3s ease-in;
 }
 
 .riddle-content {
@@ -464,6 +365,7 @@ body {
     z-index: 100;
     white-space: nowrap;
     pointer-events: none;
+    animation: fadeIn 0.3s ease-in;
 }
 
 .answer-content {
@@ -516,4 +418,75 @@ body {
     }
 }
 
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .festival-title {
+        font-size: 2.5em;
+    }
 
+    .moon {
+        width: 80px;
+        height: 80px;
+        top: 30px;
+        right: 30px;
+    }
+
+    .lantern-row {
+        gap: 15px;
+    }
+
+    .lantern-body {
+        width: 60px;
+        height: 75px;
+    }
+
+    .lantern-body::after {
+        width: 35px;
+        height: 45px;
+    }
+
+    .bowl {
+        width: 200px;
+        height: 100px;
+        border-radius: 0 0 100px 100px;
+    }
+
+    .bowl::before {
+        border-radius: 0 0 90px 90px;
+    }
+
+    .tangyuan {
+        width: 30px;
+        height: 30px;
+    }
+
+    .tangyuan-1 { top: 25px; left: 20px; }
+    .tangyuan-2 { top: 30px; left: 60px; }
+    .tangyuan-3 { top: 28px; left: 100px; }
+    .tangyuan-4 { top: 35px; left: 140px; }
+    .tangyuan-5 { top: 38px; left: 175px; }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 20px 10px;
+    }
+
+    .festival-title {
+        font-size: 2em;
+    }
+
+    .title-greeting {
+        display: block;
+        margin-top: 10px;
+    }
+
+    .lantern-row {
+        gap: 10px;
+    }
+
+    .lantern-body {
+        width: 50px;
+        height: 65px;
+    }
+}
